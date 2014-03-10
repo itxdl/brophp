@@ -1,6 +1,6 @@
 <?php
 
-namespace borphp\brolog\handle;
+namespace brophp\brolog\handle;
 
 interface ProcessInterface
 {

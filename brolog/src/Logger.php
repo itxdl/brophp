@@ -1,5 +1,4 @@
 <?php
-
 /**
  *
  *
@@ -7,8 +6,7 @@
  */
  
 namespace brophp\brolog;
- 
-use brophp\brolog\hander\LoggerInterface;
+use brophp\brolog\handle\LoggerInterface;
 
 /**
  *
@@ -16,7 +14,7 @@ use brophp\brolog\hander\LoggerInterface;
  *
  */
  
-class Logger extends LoggerInterface
+class Logger
 {
     /**
      * 详细的debug信息
@@ -51,6 +49,8 @@ class Logger extends LoggerInterface
      */ 
     const ALERT = 550;
     
+    const EMERGENCY = 600;
+    
     protected static $levels = array(
         100 => 'DEBUG',
         200 => 'INFO',
@@ -75,14 +75,14 @@ class Logger extends LoggerInterface
             $this -> processors = $processors;
         }else if(is_array($processors)){
             foreach($processors as $value){
-                if(is_object($value)){
-                    $this -> processors = $processors;
-                }else{
-                    throw new Exception('数组参数的值必须为对像');
-                }
-            }
+               if(is_obiect($value)){
+                   $this -> processors = $value;
+               }else{
+                    throw new \Exception('数组参数的值必须为存在的类名,并类中实现ProcessInterface中的write方法');
+               }
+           }
         }else{
-            throw new Exception('参数必须为对像');
+            throw new \Exception('参数必须为存在的类名,并类中实现ProcessInterface中的write方法');
         }
     }
     
@@ -108,23 +108,26 @@ class Logger extends LoggerInterface
     public function addRecord($level, $message, array $context = array())
     {
         $record = array(
-            'message'    => (string) $message;
-            'context'    => $context;
-            'level'      => $level;
-            'level_name' => self::getLevelName($level);
-            'datatime'   => time();
+            'message'    => (string) $message,
+            'context'    => $context,
+            'level'      => $level,
+            'level_name' => self::getLevelName($level),
+            'datatime'   => time(),
             'extra'      => array(),
         );
         
         if(is_array($this -> processors)){
-            foreach($this -> processors as $processor){
-                $record = call_user_func($processor, $record);
+            foreach($this -> processors as $processors){
+                $record = call_user_func(array($processors,'write'), $record);
             }
         }else{
-            $record = call_user_func($this -> $processor, $record);
+            $record = call_user_func(array($this -> processors,'write'), $record);
         }
-        
-        return true;
+        if($record){
+            return true;
+        }else{
+            return false;
+        }
     }
         
     /**
