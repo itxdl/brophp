@@ -73,18 +73,16 @@ class Logger extends LoggerInterface
     {
         if(is_object($processors)){
             $this -> processors = $processors;
-        }else{
-            throw new Exception('参数必须为对像');
-        }
-        
-        if(is_array($processors)){
+        }else if(is_array($processors)){
             foreach($processors as $value){
-                if(is_object($processors)){
+                if(is_object($value)){
                     $this -> processors = $processors;
                 }else{
-                    throw new Execption('参数必须为对像');
+                    throw new Exception('数组参数的值必须为对像');
                 }
             }
+        }else{
+            throw new Exception('参数必须为对像');
         }
     }
     
