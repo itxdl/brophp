@@ -76,13 +76,13 @@ class Logger
         }else if(is_array($processors)){
             foreach($processors as $value){
                if(is_obiect($value)){
-                   $this -> processors = $value;
+                   $this -> processors[] = $value;
                }else{
-                    throw new \Exception('数组参数的值必须为存在的类名,并类中实现ProcessInterface中的write方法');
+                    throw new \Exception('数组参数的值必须为对像,并类中实现ProcessInterface中的write方法');
                }
            }
         }else{
-            throw new \Exception('参数必须为存在的类名,并类中实现ProcessInterface中的write方法');
+            throw new \Exception('参数必须为对像,并类中实现ProcessInterface中的write方法');
         }
     }
     
